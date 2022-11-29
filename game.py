@@ -4,11 +4,12 @@ import time
 import piece
 from board import Board
 
+#INITIALISATION DU PLATEAU
 board = pygame.transform.scale(pygame.image.load(os.path.join("img","board_alt.png")), (750, 750))
 rect = (113,113,525,525)
 
 pygame.font.init()
-    
+#MIS A JOUR DU JEU 
 def redraw_gameWindow(win, bo, p1, p2):
     win.blit(board, (0, 0))
     bo.draw(win)
@@ -28,7 +29,7 @@ def redraw_gameWindow(win, bo, p1, p2):
 
     pygame.display.update()
 
-
+#ECRAN DE LA FIN DU JEU
 def end_screen(win, text):
     pygame.font.init()
     font = pygame.font.SysFont("comicsans", 80)
@@ -68,9 +69,9 @@ def click(pos):
     return -1, -1
 
 def main():
+    #INITIALISATION DES VARAIBLES
     p1Time = 900
     p2Time = 900
-
     turn = "w"
     count = 0
     bo = Board(8, 8)
@@ -78,34 +79,36 @@ def main():
     clock = pygame.time.Clock()
     run = True
     startTime = time.time()
+    #TANT QUE LE JEU TOURNE, JOUER
     while run:
         clock.tick(15)
-        
+        #SI LE JOUEUR BLANC PERD A CAUSE DU TEMPS, ECRIRE QUE LES NOIRS ON GG
         if turn == "w":
             p1Time -= (time.time() - startTime)
             if p1Time <= 0:
                 end_screen(win, "Black Wins")
+        #SI LE JOUEUR NOIR PERD A CAUSE DU TEMPS, ECRIRE QUE LES BLANC ON GG
         else:
             p2Time -=  (time.time() - startTime)
             if p2Time <= 0:
                 end_screen(win, "White Wins")
 
         startTime = time.time()
-        
+        #METTRE A JOUR LE JEU 
         redraw_gameWindow(win, bo, int(p1Time), int(p2Time))
-
+        #QUITTER LA PARTIE
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
                 quit()
-
+            #DEPLACEMENTS DES PIONS
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 bo.update_moves()
                 i, j = click(pos)
                 change = bo.select(i,j, turn)
-
+                #CHACUN SON TOUR DE JOUER
                 if change == True:
                     startTime = time.time()
                     count +=1
@@ -113,9 +116,11 @@ def main():
                         turn = "b"
                     else:
                         turn = "w"
-
+#TAILLE DE L ECRAN
 width = 750
 height = 750
+#DECLARE LA VARIABLE WIN
 win = pygame.display.set_mode((width, height))
+#TITRE DE L APPLICATION
 pygame.display.set_caption("Chess Game")
 main()
